@@ -1,0 +1,1030 @@
+import {
+  CodeSurfer,
+  CodeSurferColumns,
+  Step,
+} from "code-surfer";
+import {
+  nightOwl,
+} from "@code-surfer/themes";
+import { Image, Head } from "mdx-deck";
+
+export const theme = nightOwl;
+
+<Head>
+  <title>Factory Functions, functor, monad</title>
+</Head>
+
+# Hello 👋
+
+<p style="text-align: center">
+  Functional programming in JavaScript, what are
+  Factory Functions, functors and monads.
+</p>
+
+---
+
+# Abour Me
+
+* Ernest Teluk
+* FullStack developer
+* MERN Stack + typescript
+* I like playing the drums
+* I have a cat named gibciu ❤️
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+class PieceOfCake {
+  bake() {}
+  decorate() {}
+  cut() {}
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class PieceOfCake {
+  bake() {}
+  decorate() {}
+  cut() {}
+}
+
+class Muffin {
+  bake() {}
+  decorate() {}
+  heatUp() {}
+}
+```
+
+</Step>
+
+<Step>
+
+```js title="It would be useful to use the principle of Don't Repeat Yourself" showNumbers 1:11
+class PieceOfCake {
+  bake() {}
+  decorate() {}
+  cut() {}
+}
+
+class Muffin {
+  bake() {}
+  decorate() {}
+  heatUp() {}
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers 1:4
+class Baking {
+  bake() {}
+  decorate() {}
+}
+```
+
+</Step>
+
+<Step>
+
+```js title="inheritance" showNumbers
+class Baking {
+  bake() {}
+  decorate() {}
+}
+
+class PieceOfCake extends Baking {
+  cut() {}
+}
+
+class Muffin extends Baking {
+  heatUp() {}
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class Baking {
+  bake() {}
+  decorate() {}
+}
+
+class PieceOfCake extends Baking {
+  cut() {}
+}
+
+class Muffin extends Baking {
+  heatUp() {}
+}
+
+class Salad {
+  mixed() {}
+  decorate() {}
+}
+```
+
+</Step>
+
+<Step>
+
+```js title="The Duplication by Necessity Problem" showNumbers 1:17
+class Baking {
+  bake() {}
+  decorate() {}
+}
+
+class PieceOfCake extends Baking {
+  cut() {}
+}
+
+class Muffin extends Baking {
+  heatUp() {}
+}
+
+class Salad {
+  mixed() {}
+  decorate() {}
+}
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+# Factory Function
+
+<p style="text-align: center">A factory function is any function that is not a class or constructor that returns a (possibly new) object</p>
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js title="Composition" showNumbers
+const bakable = (state) => ({
+  bake: () => console.log(`baking new ${state.type}`),
+});
+
+const decorable = (state) => ({
+  decorate: () => console.log(`decorating new ${state.name}`),
+});
+
+const cutable = (state) => ({
+  cut: () => console.log(`cuting new ${state.name}`),
+});
+```
+
+</Step>
+
+<Step>
+
+```js title="Factory Function" showNumbers
+const bakable = (state) => ({
+  bake: () => console.log(`baking new ${state.type}`),
+});
+
+const decorable = (state) => ({
+  decorate: () => console.log(`decorating new ${state.name}`),
+});
+
+const cutable = (state) => ({
+  cut: () => console.log(`cuting new ${state.name}`),
+});
+
+const pieceOfCake = (name, type) => {
+  const state = { name, type };
+
+  return Object.assign({}, bakable(state), decorable(state), cutable(state));
+};
+```
+
+</Step>
+
+<Step>
+
+```js title="Factory Function" showNumbers
+const bakable = (state) => ({
+  bake: () => console.log(`baking new ${state.type}`),
+});
+
+const decorable = (state) => ({
+  decorate: () => console.log(`decorating new ${state.name}`),
+});
+
+const cutable = (state) => ({
+  cut: () => console.log(`cuting new ${state.name}`),
+});
+
+const pieceOfCake = (name, type) => {
+  const state = { name, type };
+
+  return Object.assign({}, bakable(state), decorable(state), cutable(state));
+};
+
+const newPiece = pieceOfCake('chocolate cake', 'cake');
+newPiece.bake();
+newPiece.decorate();
+newPiece.cut();
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<Image
+  src="https://raw.githubusercontent.com/ErnestTeluk/functional-programming/main/images/1.png"
+  style="background-image: contain; background-size: 800px auto;"
+/>
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+
+  addItem(item) {
+    this.items.push(item)
+  }
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+
+  addItem(item) {
+    this.items.push(item)
+  }
+
+  getItems() {
+    return this.items;
+  }
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+
+  addItem(item) {
+    this.items.push(item)
+  }
+
+  getItems() {
+    return this.items;
+  }
+}
+
+const numbers = new List()
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+
+  addItem(item) {
+    this.items.push(item)
+  }
+
+  getItems() {
+    return this.items;
+  }
+}
+
+const numbers = new List()
+numbers.addItem(1);
+numbers.addItem(2);
+numbers.getItems();
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+
+  addItem(item) {
+    this.items.push(item)
+  }
+
+  getItems() {
+    return this.items;
+  }
+}
+
+const numbers = new List()
+numbers.addItem(1);
+numbers.addItem(2);
+numbers.getItems();
+numbers.items;
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+class List {
+  items = []
+
+  addItem(item) {
+    this.items.push(item)
+  }
+
+  getItems() {
+    return this.items;
+  }
+}
+
+const numbers = new List()
+numbers.addItem(1);
+numbers.addItem(2);
+numbers.getItems();
+numbers.items;
+
+const button = document.querySelector('button');
+button.addEventListener('click', numbers.getItems) // undefined
+button.addEventListener('click', numbers.getItems.bind(this)) // [1,2]
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+# Cons
+
+* No encapsulation
+* Problematic keyword this
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+const list = () => {
+  const items = [];
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const list = () => {
+  const items = [];
+
+  return {
+    addItem: (item) => items.push(item),
+    getItems: () => items,
+  }
+}
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const list = () => {
+  const items = [];
+
+  return {
+    addItem: (item) => items.push(item),
+    getItems: () => items,
+  }
+}
+
+const numbers = list();
+numbers.addItem(1);
+numbers.addItem(2);
+numbers.getItems(); // [1,2]
+numbers.items; // undefined
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const list = () => {
+  const items = [];
+
+  return {
+    addItem: (item) => items.push(item),
+    getItems: () => items,
+  }
+}
+
+const numbers = list();
+numbers.addItem(1);
+numbers.addItem(2);
+numbers.getItems(); // [1,2]
+numbers.items; // undefined
+numbers.addItem = '';
+numbers.addItem(3) // numbers.addItem is not a function
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const list = () => {
+  const items = [];
+
+  return Object.freeze({
+    addItem: (item) => items.push(item),
+    getItems: () => items,
+  })
+}
+
+const numbers = list();
+numbers.addItem(1);
+numbers.addItem(2);
+numbers.getItems(); // [1,2]
+numbers.items; // undefined
+numbers.addItem = '';
+numbers.addItem(3)
+numbers.getItems() // [1,2,3]
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+# Warning
+<p style="text-align: center">Due to the convergence of the <mark>concept presented</mark> with the array methods in <mark>vanila js</mark>, I will present a comparison of the  <strong>map</strong> and <strong>flatMap</strong> functions</p>
+
+---
+
+# Map
+
+<p style="text-align: center">In vanila js on an <mark>type Array</mark>, the function <strong>.map</strong> can be called, consequently obtaining again an <mark>type Array</mark> with new content.</p>
+
+---
+
+<h1 style="text-align: center">A strong analogy in the case of functors:</h1>
+
+<p style="text-align: center">In the concept under discussion, in <mark>function X</mark>, the function <strong>.map</strong> can be called, consequently obtaining again instances of <mark>function X</mark> with new content.</p>
+
+---
+
+# flatMap in vanila js
+
+<p style="text-align: center">In vanila js on a <mark>type Array</mark> the function <strong>.flatMap</strong> can be called, consequently obtaining a <mark>table</mark> from which each element has been flattened; subject to flattening.</p>
+
+---
+
+<CodeSurfer theme={theme}>
+
+```js  showNumbers
+  Array.prototype.flatMap = function(callback = () => {}) {
+    return this.map(item => callback(item).flat()).flat()
+  }
+```
+
+</CodeSurfer>
+
+<p style="text-align: center">The important thing is that we again get the <mark>Array</mark> type, which has the same methods.</p>
+
+---
+
+# flatMap in functors
+
+<p style="text-align: center">In the concept discussed here, in <mark>function X</mark>, the function <strong>.flatMap</strong> can be called, which will close the literal, so the result is a <mark>simpler type.</mark>.</p>
+
+<p style="text-align: center">We can no longer call the methods of a given functor on such a result.</p>
+
+---
+
+# Object in context
+
+* Array(a)
+* Observable(b)
+* Promise(c)
+
+---
+
+# Functors
+
+<p style="text-align: center">
+  A data structure on which you can map functions to take values from a container, modify them and then put them back into the container.
+</p>
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+  ```js title="functor" showNumbers
+  const array = [1,2,3,4];
+  ```
+
+</Step>
+
+<Step>
+
+  ```js title="functor" showNumbers
+  const array = [1,2,3,4];
+  const addOne = (value) => value + 1;
+  ```
+
+</Step>
+
+<Step>
+
+  ```js title="functor" showNumbers
+  const array = [1,2,3,4];
+  const addOne = (value) => value + 1;
+  const arrayMap = array.map(addOne);
+  ```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+# #1 Indentity
+
+---
+
+<CodeSurfer theme={theme}>
+
+```js showNumbers
+  const sameArray = array.map((v) => v);
+  ```
+
+</CodeSurfer>
+
+---
+
+# #2 Composition
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+  ```
+
+</Step>
+
+<Step>
+
+ ```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const composition = array.map((v) => triple(double(v)));
+  ```
+
+</Step>
+
+<Step>
+
+ ```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const composition = array.map((v) => triple(double(v)));
+  const chaining = array.map((v) => double(v)).map((v) => triple(v));
+  ```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<Image
+  src="https://raw.githubusercontent.com/ErnestTeluk/functional-programming/main/images/2.png"
+  style="background-image: contain; background-size: 800px auto;"
+/>
+
+---
+
+# How create a functor
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+  ```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const functor = (v) => ({})
+  ```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const functor = (v) => ({
+    map: (fn) => functor(fn(v)),
+  })
+  ```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const functor = (v) => ({
+    map: (fn) => functor(fn(v)),
+    valueOf: () => v,
+  })
+  ```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const functor = (v) => ({
+    map: (fn) => functor(fn(v)),
+    valueOf: () => v,
+  })
+
+  const number = functor(2);
+  ```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+  const double = (value) => value * 2;
+  const triple = (value) => value * 3;
+
+  const functor = (v) => ({
+    map: (fn) => functor(fn(v)),
+    valueOf: () => v,
+  })
+
+  const number = functor(2);
+  console.log("functor", number.map(double).map(triple).valueOf());
+  ```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<Image
+  src="https://raw.githubusercontent.com/ErnestTeluk/functional-programming/main/images/3.png"
+  style="background-image: contain; background-size: 800px auto;"
+/>
+
+---
+
+# Monad
+
+<p style="text-align: center">
+  A way of composing functions that require context in addition to the return value
+</p>
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js title="Monad example" showNumbers
+  [1, 2, 3, 4].flatMap((v) => [v * 2])
+  ```
+
+</Step>
+
+<Step>
+
+```js title="Monad example" showNumbers
+  [1, 2, 3, 4].flatMap((v) => [v * 2])
+
+  const promise = new Promise((res) => setTimeout(() => res("done"), 500));
+  ```
+
+</Step>
+
+<Step>
+
+```js title="Monad example" showNumbers
+  [1, 2, 3, 4].flatMap((v) => [v * 2])
+
+  const promise = new Promise((res) => setTimeout(() => res("done"), 500));
+  promise.then((data) => console.log(data));
+  ```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<h1 style="text-align: center">How the promise actually works</h1>
+
+<CodeSurfer>
+
+```js showNumbers
+const promise = new Promise((res) => setTimeout(() => res("done"), 500));
+promise.then((data) => console.log(data))
+```
+
+</CodeSurfer>
+
+<p style="text-align: center">Promise(Promise('done')) in the calback of these functions we have access to the value of the</p>
+
+---
+
+<CodeSurfer>
+
+```js showNumbers
+const promise2 = promise.then((data) => data).then((data) => console.log(data));
+console.log("this is promise", Object.prototype.toString.call(promise2));
+```
+
+</CodeSurfer>
+
+<Image
+  src="https://raw.githubusercontent.com/ErnestTeluk/functional-programming/main/images/4.png"
+  style="background-image: contain; background-size: 800px auto;"
+/>
+
+<p style="text-align: center">Promise(Promise('done')) -> Promise('done') = flat map</p>
+
+---
+
+# Own monady example
+
+<p style="text-align: center">Function to convert degrees Fahrenheit to Celsius</p>
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+const fahrenheitToCelcius = (a) => (a - 32) * 0.5556;
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const fahrenheitToCelcius = (a) => (a - 32) * 0.5556;
+
+const value1 = 15;
+const value2 = null;
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const fahrenheitToCelcius = (a) => (a - 32) * 0.5556;
+
+const value1 = 15;
+const value2 = null;
+
+console.log("good", fahrenheitToCelcius(value1));
+console.log("bad", fahrenheitToCelcius(value2));
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+# A problem arises
+
+<Image
+  src="https://raw.githubusercontent.com/ErnestTeluk/functional-programming/main/images/5.png"
+  style="background-image: contain; background-size: 800px auto;"
+/>
+
+<p style="text-align: center">All because null is converted to 0</p>
+<p style="text-align: center">We need something to stop the composition if the value is null</p>
+
+---
+
+<CodeSurferColumns theme={theme}>
+
+<Step>
+
+```js showNumbers
+const just = (v) => ({
+  map: (fn) => just(fn(v)),
+  flatMap: (fn) => fn(v),
+  valueOf: () => v,
+  inspect: () => `just(${v})`,
+  type: "just",
+});
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const just = (v) => ({
+  map: (fn) => just(fn(v)),
+  flatMap: (fn) => fn(v),
+  valueOf: () => v,
+  inspect: () => `just(${v})`,
+  type: "just",
+});
+
+const nothing = () => ({
+  map: (fn) => nothing(fn()),
+  flatMap: (fn) => fn(),
+  valueOf: () => nothing(),
+  inspect: () => `nothing()`,
+  type: "nothing",
+});
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const just = (v) => ({
+  map: (fn) => just(fn(v)),
+  flatMap: (fn) => fn(v),
+  valueOf: () => v,
+  inspect: () => `just(${v})`,
+  type: "just",
+});
+
+const nothing = () => ({
+  map: (fn) => nothing(fn()),
+  flatMap: (fn) => fn(),
+  valueOf: () => nothing(),
+  inspect: () => `nothing()`,
+  type: "nothing",
+});
+
+const maybeOf = (x) => (x == null || x.type === "nothing" ? nothing() : just(x));
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const just = (v) => ({
+  map: (fn) => just(fn(v)),
+  flatMap: (fn) => fn(v),
+  valueOf: () => v,
+  inspect: () => `just(${v})`,
+  type: "just",
+});
+
+const nothing = () => ({
+  map: (fn) => nothing(fn()),
+  flatMap: (fn) => fn(),
+  valueOf: () => nothing(),
+  inspect: () => `nothing()`,
+  type: "nothing",
+});
+
+const maybeOf = (x) => (x == null || x.type === "nothing" ? nothing() : just(x));
+
+const maybe = {
+  of: maybeOf,
+};
+```
+
+</Step>
+
+<Step>
+
+```js showNumbers
+const just = (v) => ({
+  map: (fn) => just(fn(v)),
+  flatMap: (fn) => fn(v),
+  valueOf: () => v,
+  inspect: () => `just(${v})`,
+  type: "just",
+});
+
+const nothing = () => ({
+  map: (fn) => nothing(fn()),
+  flatMap: (fn) => fn(),
+  valueOf: () => nothing(),
+  inspect: () => `nothing()`,
+  type: "nothing",
+});
+
+const maybeOf = (x) => (x == null|| x.type === "nothing" ? nothing() : just(x));
+
+const maybe = {
+  of: maybeOf,
+};
+
+const temp1 = maybe.of(value1).map(fahrenheitToCelcius).inspect();
+const temp2 = maybe.of(value2).map(fahrenheitToCelcius).map(double).inspect();
+console.log(temp1);
+console.log(temp2);
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+# Now both results are correct
+
+<Image
+  src="https://raw.githubusercontent.com/ErnestTeluk/functional-programming/main/images/6.png"
+  style="background-image: contain; background-size: 800px auto;"
+/>
+
+---
+
+# Questions? 😀

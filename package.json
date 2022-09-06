@@ -1,0 +1,21 @@
+{
+  "private": false,
+  "version": "1.0.0",
+  "scripts": {
+    "static": "cd images && npx http-server -p 8081",
+    "mdx": "mdx-deck deck.mdx",
+    "start": "concurrently \"npm:mdx\" \"npm:static\"",
+    "build": "mdx-deck build deck.mdx --prefix-paths",
+    "publish-deck": "gh-pages -d public",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "code-surfer": "3.1.0",
+    "concurrently": "6.4.0",
+    "mdx-deck": "3.0.10",
+    "gh-pages": "3.2.3",
+    "patch-package": "6.4.7"
+  },
+  "author": "Ernest Teluk",
+  "name": "factory_functor_monad"
+}

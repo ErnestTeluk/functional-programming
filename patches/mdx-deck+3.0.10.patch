@@ -1,0 +1,25 @@
+diff --git a/node_modules/mdx-deck/cli.js b/node_modules/mdx-deck/cli.js
+index 9fed7b8..ef431b6 100755
+--- a/node_modules/mdx-deck/cli.js
++++ b/node_modules/mdx-deck/cli.js
+@@ -88,7 +88,7 @@ const gatsby = async (...args) => {
+ 
+ switch (cmd) {
+   case 'build':
+-    gatsby('build').then(() => {
++    gatsby('build', '--prefix-paths').then(() => {
+       const public = path.join(__dirname, 'public')
+       const dist = path.join(process.cwd(), 'public')
+       if (public === dist) return
+diff --git a/node_modules/mdx-deck/gatsby-config.js b/node_modules/mdx-deck/gatsby-config.js
+index 7d8c2f8..20d96e4 100644
+--- a/node_modules/mdx-deck/gatsby-config.js
++++ b/node_modules/mdx-deck/gatsby-config.js
+@@ -1,6 +1,7 @@
+ const src = process.env.__SRC__
+ 
+ module.exports = {
++  pathPrefix: `/functional-programming`,
+   plugins: [
+     {
+       resolve: 'gatsby-theme-mdx-deck',
